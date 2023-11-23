@@ -7,12 +7,12 @@
     "ecmaVersion": 2020,
     "jsx": true
   },
-  "plugins": ["@typescript-eslint", "preact", "jsx-a11y"],
+  "plugins": ["@typescript-eslint", "jsx-a11y"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:preact/recommended",
-    "plugin:jsx-a11y/recommended"
+    "plugin:jsx-a11y/recommended",
+    "preactg"
   ],
   "rules": {
     "no-console": "error",
