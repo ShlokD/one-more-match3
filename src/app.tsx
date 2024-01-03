@@ -1,4 +1,4 @@
-import { useEffect, useState } from "preact/hooks";
+import { useState } from "preact/hooks";
 const colors = ["blue", "green", "orange", "purple", "red", "yellow", "gray"];
 
 const BG_MAP: Record<string, string> = {
@@ -82,17 +82,14 @@ const checkMatches = (grid: string[][]) => {
       const val = grid[i][j];
       if (grid?.[i + 1]?.[j] === val && grid?.[i - 1]?.[j] === val) {
         matches++;
-      } else if (grid?.[i]?.[j + 1] === val && grid?.[i]?.[j - 1] === val) {
+      }
+      if (grid?.[i]?.[j + 1] === val && grid?.[i]?.[j - 1] === val) {
         matches++;
-      } else if (
-        grid?.[i + 1]?.[j + 1] === val &&
-        grid?.[i - 1]?.[j - 1] === val
-      ) {
+      }
+      if (grid?.[i + 1]?.[j + 1] === val && grid?.[i - 1]?.[j - 1] === val) {
         matches++;
-      } else if (
-        grid?.[i - 1]?.[j + 1] === val &&
-        grid?.[i + 1]?.[j - 1] === val
-      ) {
+      }
+      if (grid?.[i - 1]?.[j + 1] === val && grid?.[i + 1]?.[j - 1] === val) {
         matches++;
       }
     }
@@ -110,21 +107,18 @@ const addNewItems = (oldGrid: string[][]) => {
         grid[i][j] = getRandomColor();
         grid[i + 1][j] = getRandomColor();
         grid[i - 1][j] = getRandomColor();
-      } else if (grid?.[i]?.[j + 1] === val && grid?.[i]?.[j - 1] === val) {
+      }
+      if (grid?.[i]?.[j + 1] === val && grid?.[i]?.[j - 1] === val) {
         grid[i][j] = getRandomColor();
         grid[i][j + 1] = getRandomColor();
         grid[i][j - 1] = getRandomColor();
-      } else if (
-        grid?.[i + 1]?.[j + 1] === val &&
-        grid?.[i - 1]?.[j - 1] === val
-      ) {
+      }
+      if (grid?.[i + 1]?.[j + 1] === val && grid?.[i - 1]?.[j - 1] === val) {
         grid[i][j] = getRandomColor();
         grid[i + 1][j + 1] = getRandomColor();
         grid[i - 1][j - 1] = getRandomColor();
-      } else if (
-        grid?.[i - 1]?.[j + 1] === val &&
-        grid?.[i + 1]?.[j - 1] === val
-      ) {
+      }
+      if (grid?.[i - 1]?.[j + 1] === val && grid?.[i + 1]?.[j - 1] === val) {
         grid[i][j] = getRandomColor();
         grid[i - 1][j + 1] = getRandomColor();
         grid[i + 1][j - 1] = getRandomColor();
@@ -155,12 +149,22 @@ export function App() {
       setSelected(null);
     } else {
       setGrid((prev) => {
-        const newGrid = copyGrid(prev);
+        let newGrid = copyGrid(prev);
         const temp = newGrid[selected.row][selected.column];
         newGrid[selected.row][selected.column] = newGrid[row][column];
         newGrid[row][column] = temp;
+
+        let matches = checkMatches(newGrid);
+
+        while (matches > 0) {
+          setScore((prev) => prev + matches);
+          newGrid = addNewItems(newGrid);
+          matches = checkMatches(newGrid);
+        }
+
         return newGrid;
       });
+
       setSelected(null);
     }
   };
@@ -180,17 +184,6 @@ export function App() {
       (row === selected.row && column === selected.column + 1)
     );
   };
-
-  useEffect(() => {
-    setTimeout(() => {
-      const matches = checkMatches(grid);
-
-      if (matches > 0) {
-        setScore((prev) => prev + 1);
-        setGrid(addNewItems(grid));
-      }
-    }, 100);
-  }, [grid]);
 
   const changeGrid = (value: number) => {
     setGridSize(value);
